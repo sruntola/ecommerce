@@ -1,0 +1,8 @@
+###
+POST https://localhost:3000/category
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "Design"
+}
