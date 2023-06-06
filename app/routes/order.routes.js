@@ -12,5 +12,6 @@ module.exports = function (app) {
     app.post('/api/v1/order', [auth.verifyToken], controller.createOrder)
     app.get('/api/v1/order', [auth.verifyToken], controller.findAllOrder)
     app.put('/api/v1/order/:id', [auth.verifyToken], controller.updateOrder)
+    app.get('/api/v1/invoice/:id', [auth.verifyToken], controller.findInvoiceByOrderId)
     app.delete('/api/v1/order/:id', [auth.verifyToken], controller.deleteOrder)
 }

@@ -181,3 +181,78 @@ exports.findAllOrder = async (req, res) => {
         })
     }
 }
+
+exports.findInvoiceByOrderId = async (req, res) => {
+    try {
+        const invoice = await Order.findByPk(req.params.id, {
+            attributes: [
+                "id",
+                "total_amount",
+                [db.sequelize.literal(`SUM((orderitems.price)*(orderitems.quantity))`), 'total_amount'],
+                "status",
+                "created_at",
+                "updated_at"
+            ],
+            order: [
+                ['id', 'DESC']
+            ],
+            where: {
+                userId: req.userId
+            },
+            include: [
+                {
+                    model: DeliveryAddress,
+                    attributes: [
+                        "id",
+                        "street_no",
+                        "home_no",
+                        "full_address",
+                        "latitute",
+                        "longtitute"
+                    ]
+                },
+                {
+                    model: OrderItem,
+                    attributes: [
+                        "id",
+                        "quantity",
+                        "price",
+                        [db.sequelize.literal(`(orderitems.price)*(orderitems.quantity)`), 'total_price']
+                    ],
+                    include: [
+                        {
+                            model: Product,
+                            attributes: [
+                                "id",
+                                "name",
+                                "thumbnail_url",
+                                "discount"
+                            ]
+                        },
+                        {
+                            model: Variant,
+                            attributes: [
+                                "id",
+                                "name",
+                                "image_url",
+                                "colors",
+                                "size"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            group: ['orders.id', 'deliveryaddress.id', 'orderitems.id', 'orderitems.product.id', 'orderitems.variant.id']
+        })
+        if (!invoice) {
+            res.status(404).send({
+                message: "Invoice not found at this order"
+            })
+        }
+        res.status(200).send(invoice)
+
+
+    } catch (ex) {
+        res.status(404).send(ex.message)
+    }
+}

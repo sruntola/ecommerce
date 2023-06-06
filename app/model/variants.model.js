@@ -17,6 +17,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             allownull: false
         },
+        size: {
+            type: Sequelize.INTEGER,
+            allownull: false
+        },
         colors: {
             type: Sequelize.ARRAY(Sequelize.TEXT),
             defaultValue: []
