@@ -10,6 +10,7 @@ const Lesson = db.lesson
 const Profile = db.profiles
 const CourseViews = db.course_views
 const { QueryTypes } = require('sequelize')
+const { Sequelize, Op } = require("sequelize");
 const getPagination = require('../utils/pagination')
 const getPagingData = require('../utils/paginationData')
 // const { getVideoDurationInSeconds } = require('get-video-duration')
@@ -167,56 +168,127 @@ exports.updateProduct = async (req, res) => {
 
 exports.findProductListing = async (req, res) => {
     const token = req.headers.authorization
-    const { page, size } = req.query
+    const { page, size, name } = req.query
     const { limit, offset } = getPagination(page, size);
     try {
-        if (!token) {
-            const products = await Product.findAndCountAll({
-                limit: limit,
-                offset: offset,
-                order: [
-                    ['id', 'ASC']
-                ],
-                attributes: [
-                    "id",
-                    "name",
-                    "description",
-                    "price",
-                    "thumbnail_url",
-                    "discount"
-                ]
-            })
-            if (!products) {
-                res.status(404).send({
-                    message: "Product not found..."
+        if (!name) {
+            if (!token) {
+                const products = await Product.findAndCountAll({
+                    limit: limit,
+                    offset: offset,
+                    order: [
+                        ['id', 'ASC']
+                    ],
+                    attributes: [
+                        "id",
+                        "name",
+                        "description",
+                        "price",
+                        "thumbnail_url",
+                        "discount"
+                    ]
                 })
+                if (!products) {
+                    res.status(404).send({
+                        message: "Product not found..."
+                    })
+                } else {
+                    const response = getPagingData(products, page, size)
+                    res.status(200).send(response)
+                }
             } else {
-                const response = getPagingData(products, page, size)
-                res.status(200).send(response)
+                const products = await Product.findAndCountAll({
+                    limit: limit,
+                    offset: offset,
+                    order: [
+                        ['id', 'ASC']
+                    ],
+
+                    attributes: [
+                        "id",
+                        "name",
+                        "description",
+                        "price",
+                        "thumbnail_url",
+                        "discount"
+                    ]
+                })
+                if (!products) {
+                    res.status(404).send({
+                        message: "Product not found..."
+                    })
+                } else {
+                    const response = getPagingData(products, page, size)
+                    res.status(200).send(response)
+                }
             }
         } else {
-            const products = await Product.findAndCountAll({
-                limit: limit,
-                offset: offset,
-                order: [
-                    ['id', 'ASC']
-                ],
-                attributes: [
-                    "id",
-                    "name",
-                    "description",
-                    "price",
-                    "thumbnail_url",
-                    "discount"
-                ]
-            })
-            if (!products) {
-                res.status(404).send({
-                    message: "Product not found..."
+            if (!token) {
+                const products = await Product.findAndCountAll({
+                    limit: limit,
+                    offset: offset,
+                    order: [
+                        ['id', 'ASC']
+                    ],
+                    where: {
+                        [Op.or]: [
+                            {
+                                name: {
+                                    [Op.like]: '%' + name + '%'
+                                }
+                            }
+                        ]
+                    },
+                    attributes: [
+                        "id",
+                        "name",
+                        "description",
+                        "price",
+                        "thumbnail_url",
+                        "discount"
+                    ]
                 })
+                if (!products) {
+                    res.status(404).send({
+                        message: "Product not found..."
+                    })
+                } else {
+                    const response = getPagingData(products, page, size)
+                    res.status(200).send(response)
+                }
             } else {
-                const response = getPagingData(products, page, size)
-                res.status(200).send(response)
+                const products = await Product.findAndCountAll({
+                    limit: limit,
+                    offset: offset,
+                    order: [
+                        ['id', 'ASC']
+                    ],
+                    where: {
+                        [Op.or]: [
+                            {
+                                name: {
+                                    [Op.like]: '%' + name + '%'
+                                }
+                            }
+                        ]
+                    },
+                    attributes: [
+                        "id",
+                        "name",
+                        "description",
+                        "price",
+                        "thumbnail_url",
+                        "discount"
+                    ]
+                })
+                if (!products) {
+                    res.status(404).send({
+                        message: "Product not found..."
+                    })
+                } else {
+                    const response = getPagingData(products, page, size)
+                    res.status(200).send(response)
+                }
             }
         }
     } catch (ex) {
@@ -435,4 +507,76 @@ exports.findRelatedCourse = async (req, res) => {
             sub
         }
     })
+}
+
+exports.searchfindProductListing = async (req, res) => {
+    const token = req.headers.authorization
+    const { page, size, title } = req.query
+    const { limit, offset } = getPagination(page, size);
+    try {
+        if (!token) {
+            const products = await Product.findAndCountAll({
+                limit: limit,
+                offset: offset,
+                order: [
+                    ['id', 'ASC']
+                ],
+                where: {
+                    [Op.or]: [
+                        {
+                            title: {
+                                [Op.like]: `%${title}%`
+                            }
+                        }
+                    ]
+
+
+                },
+                attributes: [
+                    "id",
+                    "name",
+                    "description",
+                    "price",
+                    "thumbnail_url",
+                    "discount"
+                ]
+            })
+            if (!products) {
+                res.status(404).send({
+                    message: "Product not found..."
+                })
+            } else {
+                const response = getPagingData(products, page, size)
+                res.status(200).send(response)
+            }
+        } else {
+            const products = await Product.findAndCountAll({
+                limit: limit,
+                offset: offset,
+                order: [
+                    ['id', 'ASC']
+                ],
+                attributes: [
+                    "id",
+                    "name",
+                    "description",
+                    "price",
+                    "thumbnail_url",
+                    "discount"
+                ]
+            })
+            if (!products) {
+                res.status(404).send({
+                    message: "Product not found..."
+                })
+            } else {
+                const response = getPagingData(products, page, size)
+                res.status(200).send(response)
+            }
+        }
+    } catch (ex) {
+        res.status(404).send({
+            message: ex.message
+        })
+    }
 }
