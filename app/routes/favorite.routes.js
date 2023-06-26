@@ -10,5 +10,6 @@ module.exports = function (app) {
         next();
     });
     app.post('/api/v1/favorite', [auth.verifyToken], controller.addProductToFavorite);
+    app.get('/api/v1/favorite', [auth.verifyToken], controller.findProductListing);
     app.delete('/api/v1/favorite/:id', [auth.verifyToken], controller.removeFromFavorite);
 }

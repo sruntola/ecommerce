@@ -210,8 +210,15 @@ exports.findProductListing = async (req, res) => {
                         "description",
                         "price",
                         "thumbnail_url",
-                        "discount"
-                    ]
+                        "discount",
+
+                    ],
+                    include: [
+                        {
+                            model: Favorite,
+                            attributes: []
+                        }
+                    ],
                 })
                 if (!products) {
                     res.status(404).send({
