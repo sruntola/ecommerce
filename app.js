@@ -36,7 +36,7 @@ require("./app/routes/order.routes")(app);
 require("./app/routes/payment.routes")(app);
 require("./app/routes/size.routes")(app);
 require("./app/routes/variants.routes")(app);
-db.sequelize.sync({ force: true });
+db.sequelize.sync();
 app.listen(port, () => {
   console.log(`App port ${port}.`);
 });
