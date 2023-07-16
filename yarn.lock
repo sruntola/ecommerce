@@ -239,8 +239,10 @@
     through2 "^2.0.0"
     xdg-basedir "^3.0.0"
 
-"@google-cloud/storage@^6.10.1", "@google-cloud/storage@^6.9.5":
-  version "6.10.1"
+"@google-cloud/storage@^6.12.0", "@google-cloud/storage@^6.9.5":
+  version "6.12.0"
+  resolved "https://registry.npmjs.org/@google-cloud/storage/-/storage-6.12.0.tgz"
+  integrity sha512-78nNAY7iiZ4O/BouWMWTD/oSF2YtYgYB3GZirn0To6eBOugjXVoK+GXgUXOl+HlqbAOyHxAVXOlsj3snfbQ1dw==
   dependencies:
     "@google-cloud/paginator" "^3.0.7"
     "@google-cloud/projectify" "^3.0.0"
@@ -251,6 +253,7 @@
     duplexify "^4.0.0"
     ent "^2.2.0"
     extend "^3.0.2"
+    fast-xml-parser "^4.2.2"
     gaxios "^5.0.0"
     google-auth-library "^8.0.1"
     mime "^3.0.0"
@@ -1680,6 +1683,13 @@ fast-text-encoding@^1.0.0, fast-text-encoding@^1.0.3:
   version "1.0.6"
   resolved "https://registry.npmjs.org/fast-text-encoding/-/fast-text-encoding-1.0.6.tgz"
   integrity sha512-VhXlQgj9ioXCqGstD37E/HBeqEGV/qOD/kmbVG8h5xKBYvM1L3lR1Zn4555cQ8GkYbJa8aJSipLPndE1k6zK2w==
+
+fast-xml-parser@^4.2.2:
+  version "4.2.5"
+  resolved "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-4.2.5.tgz"
+  integrity sha512-B9/wizE4WngqQftFPmdaMYlXoJlJOYxGQOanC77fq9k8+Z0v5dDSVh+3glErdIROP//s/jgb7ZuxKfB8nVyo0g==
+  dependencies:
+    strnum "^1.0.5"
 
 faye-websocket@0.11.1:
   version "0.11.1"
@@ -4234,6 +4244,11 @@ strip-json-comments@^3.1.0:
   version "3.1.1"
   resolved "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-3.1.1.tgz"
   integrity sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==
+
+strnum@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.npmjs.org/strnum/-/strnum-1.0.5.tgz"
+  integrity sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==
 
 stubs@^3.0.0:
   version "3.0.0"

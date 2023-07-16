@@ -1,10 +1,12 @@
 const db = require("../model/index.model");
+const uploadImage = require("../utils/helpers");
 const Variant = db.variants;
 const Product = db.products;
 
 exports.addVariant = async (req, res) => {
   const { name, value, product_id, price, qty, image_url } = req.body;
-  if (!name && !value && !product_id && !price && !qty && !image_url) {
+  const myFile = req.file;
+  if (!name && !value && !product_id && !price && !qty) {
     res.status(404).send({ message: "Missing field..." });
   }
   const product = await Product.findByPk(product_id);
@@ -12,17 +14,18 @@ exports.addVariant = async (req, res) => {
     res.status(401).send({ message: "Product ID is invalid..." });
   }
   try {
+    const imageUrl = await uploadImage.uploadImage(myFile);
     await Variant.create({
       name: name,
       value: value,
-      imageUrl: image_url,
+      imageUrl: imageUrl,
       price: price,
       qty: qty,
       productId: product_id,
       productName: product.name + " - " + name,
     }).then((color) => {
       res.status(201).send({
-        message: "Color has been created...",
+        message: "Variant has been created...",
       });
     });
   } catch (ex) {
@@ -32,11 +35,11 @@ exports.addVariant = async (req, res) => {
 exports.deleteVariant = async (req, res) => {
   try {
     if (!req.params.id) {
-      res.status(401).send({ message: "Color id is required..." });
+      res.status(401).send({ message: "Variant id is required..." });
     }
     const color = Color.findByPk(req.params.id);
     if (!color) {
-      res.status(404).send({ message: "Color not found..." });
+      res.status(404).send({ message: "Variant not found..." });
     }
     if (color) {
       await Variant.destroy({
@@ -44,7 +47,7 @@ exports.deleteVariant = async (req, res) => {
           id: req.params.id,
         },
       }).then((value) => {
-        res.status(200).send({ message: "Color has been deleted..." });
+        res.status(200).send({ message: "Variant has been deleted..." });
       });
     }
   } catch (ex) {
@@ -54,13 +57,9 @@ exports.deleteVariant = async (req, res) => {
 
 exports.updateVariant = async (req, res) => {
   const { name, value, product_id, price, qty, image_url } = req.body;
-  if (!name && !value && !product_id && !price && !qty && !image_url) {
-    res.status(404).send({ message: "Missing field..." });
-  }
+  const myFile = req.file;
   const product = await Product.findByPk(product_id);
-  if (!product) {
-    res.status(401).send({ message: "Product ID is invalid..." });
-  }
+
   try {
     if (!req.params.id) {
       res.status(401).send({ message: "Color id is required..." });
@@ -71,12 +70,15 @@ exports.updateVariant = async (req, res) => {
     }
 
     if (color) {
+      const imageUrl = await uploadImage.uploadImage(myFile);
       await Variant.update(
         {
           name: name,
           value: value,
+          imageUrl: imageUrl,
+          price: price,
+          qty: qty,
           productId: product_id,
-          imageUrl: image_url,
           productName: product.name + " - " + name,
         },
         {
@@ -85,7 +87,7 @@ exports.updateVariant = async (req, res) => {
           },
         }
       ).then((value) => {
-        res.status(200).send({ message: "Color has been update..." });
+        res.status(200).send({ message: "Variant has been update..." });
       });
     }
   } catch (ex) {

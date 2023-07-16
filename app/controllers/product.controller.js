@@ -14,10 +14,13 @@ const { QueryTypes } = require("sequelize");
 const { Sequelize, Op } = require("sequelize");
 const getPagination = require("../utils/pagination");
 const getPagingData = require("../utils/paginationData");
+const uploadImage = require("../utils/helpers");
 // const { getVideoDurationInSeconds } = require('get-video-duration')
 exports.createProduct = async (req, res) => {
   const { name, description, price, discount, thumbnail_url, category_id } =
     req.body;
+  const myFile = req.file;
+  console.log(myFile);
   if (!name) {
     res.status(403).send({
       message: "Course title is required...",
@@ -28,22 +31,23 @@ exports.createProduct = async (req, res) => {
       message: "Price is required...",
     });
   }
-  if (!thumbnail_url) {
-    res.status(403).send({
-      message: "Thumbnail Url is required...",
-    });
-  }
+  //   if (!thumbnail_url) {
+  //     res.status(403).send({
+  //       message: "Thumbnail Url is required...",
+  //     });
+  //   }
   if (!category_id) {
     res.status(403).send({
       message: "Category id is required...",
     });
   }
   try {
+    const imageUrl = await uploadImage.uploadImage(myFile);
     await Product.create({
       name: name,
       description: description,
       price: price,
-      thumbnailUrl: thumbnail_url,
+      thumbnailUrl: imageUrl,
       userId: req.userId,
       categoryId: category_id,
     }).then((product) => {
@@ -148,6 +152,7 @@ exports.deleteProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   const product = Product.findByPk(req.params.id);
+  const myFile = req.file;
   const { name, description, price, discount, thumbnail_url, category_id } =
     req.body;
   if (!product) {
@@ -155,12 +160,13 @@ exports.updateProduct = async (req, res) => {
       message: "ID is invalid...",
     });
   }
+  const thumbnail = await uploadImage.uploadImage(myFile);
   await Product.update(
     {
       name: name,
       description: description,
       price: price,
-      thumbnailUrl: thumbnail_url,
+      thumbnailUrl: thumbnail,
       userId: req.userId,
       categoryId: category_id,
     },
