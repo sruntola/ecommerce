@@ -73,17 +73,6 @@ exports.findProductListing = async (req, res) => {
             "discount",
           ],
         },
-        {
-          model: Variant,
-          attributes: [
-            "id",
-            "name",
-            "value",
-            "product_name",
-            "image_url",
-            "product_id",
-          ],
-        },
       ],
     });
     if (!products) {
