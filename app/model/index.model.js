@@ -1,13 +1,13 @@
 const Sequelize = require("sequelize");
 const categories = require("./categories.model");
 const subCategories = require("./subcategories.model");
-// const sequelize = new Sequelize("ecommerce-db", "me", "password", {
-//   host: "localhost",
-//   dialect: "postgres",
-//   port: 5432,
-// });
-const connectionString = `${process.env.DATABASE_URL}`;
-const sequelize = new Sequelize(connectionString);
+const sequelize = new Sequelize("ecommerce-db", "me", "password", {
+  host: "localhost",
+  dialect: "postgres",
+  port: 5432,
+});
+// const connectionString = `${process.env.DATABASE_URL}`;
+// const sequelize = new Sequelize(connectionString);
 
 const db = {};
 
@@ -30,6 +30,8 @@ db.productSection = require("./product_section.model")(sequelize, Sequelize);
 db.deviceToken = require("./device_token.model")(sequelize, Sequelize);
 db.sizes = require("./sizes.model")(sequelize, Sequelize);
 db.variants = require("./variants.model")(sequelize, Sequelize);
+db.profiles = require("./profiles.model")(sequelize, Sequelize);
+db.users.hasMany(db.profiles);
 db.sizes.hasMany(db.orderItem);
 db.orderItem.belongsTo(db.sizes);
 db.variants.hasMany(db.orderItem);

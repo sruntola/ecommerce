@@ -17,46 +17,88 @@ const getPagingData = require("../utils/paginationData");
 const uploadImage = require("../utils/helpers");
 // const { getVideoDurationInSeconds } = require('get-video-duration')
 exports.createProduct = async (req, res) => {
-  const { name, description, price, discount, thumbnail_url, category_id } =
+  const { name, description, price, discount, thumbnail, category_id } =
     req.body;
-  const myFile = req.file;
-  console.log(myFile);
-  if (!name) {
-    res.status(403).send({
-      message: "Course title is required...",
-    });
-  }
-  if (!price) {
-    res.status(403).send({
-      message: "Price is required...",
-    });
-  }
-  //   if (!thumbnail_url) {
-  //     res.status(403).send({
-  //       message: "Thumbnail Url is required...",
-  //     });
-  //   }
-  if (!category_id) {
-    res.status(403).send({
-      message: "Category id is required...",
-    });
-  }
-  try {
-    const imageUrl = await uploadImage.uploadImage(myFile);
-    await Product.create({
-      name: name,
-      description: description,
-      price: price,
-      thumbnailUrl: imageUrl,
-      userId: req.userId,
-      categoryId: category_id,
-    }).then((product) => {
-      res.status(201).send({
-        message: "Course Created...",
+  const imageUrlPath = typeof req.body.thumbnail;
+  if (imageUrlPath === "string") {
+    if (!name) {
+      res.status(403).send({
+        message: "Course title is required...",
       });
-    });
-  } catch (ex) {
-    res.status(404).send({ message: ex.message });
+    }
+    if (!price) {
+      res.status(403).send({
+        message: "Price is required...",
+      });
+    }
+    //   if (!thumbnail_url) {
+    //     res.status(403).send({
+    //       message: "Thumbnail Url is required...",
+    //     });
+    //   }
+    if (!category_id) {
+      res.status(403).send({
+        message: "Category id is required...",
+      });
+    }
+    try {
+      await Product.create({
+        name: name,
+        description: description,
+        price: price,
+        thumbnailUrl: req.body.thumbnail,
+        userId: req.userId,
+        discount: discount,
+        categoryId: category_id,
+      }).then((product) => {
+        res.status(201).send({
+          message: "Course Created...",
+        });
+      });
+    } catch (ex) {
+      res.status(404).send({ message: ex.message });
+    }
+  } else {
+    const myFile = req.file;
+    console.log(myFile);
+    if (!name) {
+      res.status(403).send({
+        message: "Course title is required...",
+      });
+    }
+    if (!price) {
+      res.status(403).send({
+        message: "Price is required...",
+      });
+    }
+    //   if (!thumbnail_url) {
+    //     res.status(403).send({
+    //       message: "Thumbnail Url is required...",
+    //     });
+    //   }
+    if (!category_id) {
+      res.status(403).send({
+        message: "Category id is required...",
+      });
+    }
+    try {
+      const imageUrl = await uploadImage.uploadImage(myFile);
+      await Product.create({
+        name: name,
+        description: description,
+        price: price,
+        thumbnailUrl: imageUrl,
+        userId: req.userId,
+        discount: discount,
+        categoryId: category_id,
+      }).then((product) => {
+        res.status(201).send({
+          message: "Product Created...",
+        });
+      });
+    } catch (ex) {
+      res.status(404).send({ message: ex.message });
+    }
   }
 };
 
@@ -152,34 +194,64 @@ exports.deleteProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   const product = Product.findByPk(req.params.id);
-  const myFile = req.file;
-  const { name, description, price, discount, thumbnail_url, category_id } =
-    req.body;
-  if (!product) {
-    res.status(404).send({
-      message: "ID is invalid...",
+  const imagePathUrl = typeof req.body.thumbnail;
+  if (imagePathUrl === "string") {
+    const { name, description, price, discount, thumbnail, category_id } =
+      req.body;
+    if (!product) {
+      res.status(404).send({
+        message: "ID is invalid...",
+      });
+    }
+    await Product.update(
+      {
+        name: name,
+        description: description,
+        price: price,
+        thumbnailUrl: thumbnail,
+        userId: req.userId,
+        categoryId: category_id,
+      },
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    ).then((product) => {
+      res.status(201).send({
+        message: "Product updated...",
+      });
+    });
+  } else {
+    const myFile = req.file;
+    const { name, description, price, discount, thumbnail_url, category_id } =
+      req.body;
+    if (!product) {
+      res.status(404).send({
+        message: "ID is invalid...",
+      });
+    }
+    const thumbnail = await uploadImage.uploadImage(myFile);
+    await Product.update(
+      {
+        name: name,
+        description: description,
+        price: price,
+        thumbnailUrl: thumbnail,
+        userId: req.userId,
+        categoryId: category_id,
+      },
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    ).then((product) => {
+      res.status(201).send({
+        message: "Product updated...",
+      });
     });
   }
-  const thumbnail = await uploadImage.uploadImage(myFile);
-  await Product.update(
-    {
-      name: name,
-      description: description,
-      price: price,
-      thumbnailUrl: thumbnail,
-      userId: req.userId,
-      categoryId: category_id,
-    },
-    {
-      where: {
-        id: req.params.id,
-      },
-    }
-  ).then((product) => {
-    res.status(201).send({
-      message: "Product updated...",
-    });
-  });
 };
 
 exports.findProductListing = async (req, res) => {
