@@ -7,7 +7,7 @@ exports.addVariant = async (req, res) => {
   const { name, value, product_id, price, qty, image_url } = req.body;
   const imageUrlPath = typeof req.body.product_image;
   if (imageUrlPath === "string") {
-    if (!name && !value && !product_id && !price && !qty) {
+    if (!name && !value && !product_id) {
       res.status(404).send({ message: "Missing field..." });
     }
     const product = await Product.findByPk(product_id);
@@ -19,8 +19,6 @@ exports.addVariant = async (req, res) => {
         name: name,
         value: value,
         imageUrl: req.body.product_image,
-        price: price,
-        qty: qty,
         productId: product_id,
         productName: product.name + " - " + name,
       }).then((color) => {
@@ -33,7 +31,7 @@ exports.addVariant = async (req, res) => {
     }
   } else {
     const myFile = req.file;
-    if (!name && !value && !product_id && !price && !qty) {
+    if (!name && !value && !product_id) {
       res.status(404).send({ message: "Missing field..." });
     }
     const product = await Product.findByPk(product_id);
@@ -46,8 +44,6 @@ exports.addVariant = async (req, res) => {
         name: name,
         value: value,
         imageUrl: imageUrl,
-        price: price,
-        qty: qty,
         productId: product_id,
         productName: product.name + " - " + name,
       }).then((color) => {
@@ -84,7 +80,7 @@ exports.deleteVariant = async (req, res) => {
 };
 
 exports.updateVariant = async (req, res) => {
-  const { name, value, product_id, price, qty, image_url } = req.body;
+  const { name, value, product_id, image_url } = req.body;
   const imagePathUrl = typeof req.body.product_image;
   if (imagePathUrl === "string") {
     const product = await Product.findByPk(product_id);
@@ -103,8 +99,6 @@ exports.updateVariant = async (req, res) => {
             name: name,
             value: value,
             imageUrl: req.body.product_image,
-            price: price,
-            qty: qty,
             productId: product_id,
             productName: product.name + " - " + name,
           },
@@ -139,8 +133,6 @@ exports.updateVariant = async (req, res) => {
             name: name,
             value: value,
             imageUrl: imageUrl,
-            price: price,
-            qty: qty,
             productId: product_id,
             productName: product.name + " - " + name,
           },

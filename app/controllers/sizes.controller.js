@@ -2,11 +2,13 @@ const db = require("../model/index.model");
 const Size = db.sizes;
 
 exports.addProductSize = async (req, res) => {
-  const { size_text, variant_id } = req.body;
+  const { size_text, variant_id, price, qty } = req.body;
   try {
     const size = await Size.create({
       sizeText: size_text,
       variantId: variant_id,
+      price: price,
+      qty: qty,
     });
     if (size) {
       res.status(201).send({

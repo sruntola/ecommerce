@@ -6,6 +6,14 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.TEXT,
         allownull: false,
       },
+      price: {
+        type: Sequelize.DOUBLE,
+        allownull: false,
+      },
+      qty: {
+        type: Sequelize.INTEGER,
+        allownull: false,
+      },
     },
     {
       underscored: true,

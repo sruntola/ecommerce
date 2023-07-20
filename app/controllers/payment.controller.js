@@ -3,6 +3,7 @@ const Payment = db.payment;
 const Order = db.order;
 const OrderItem = db.orderItem;
 const Vairant = db.variants;
+const Size = db.sizes;
 
 exports.createPayment = async (req, res) => {
   const { amount, payment_method, order_id } = req.body;
@@ -48,13 +49,18 @@ exports.createPayment = async (req, res) => {
               const variant = await Vairant.findByPk(
                 orderitem[index].variantId
               );
-              await Vairant.update(
+              const size = await Size.findOne({
+                where: {
+                  variant_id: variant.id,
+                },
+              });
+              await Size.update(
                 {
-                  qty: variant.qty - orderitem[index].quantity,
+                  qty: size.qty - orderitem[index].quantity,
                 },
                 {
                   where: {
-                    id: orderitem[index].variantId,
+                    id: size.id,
                   },
                 }
               );

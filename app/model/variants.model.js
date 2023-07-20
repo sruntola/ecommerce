@@ -14,14 +14,6 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      price: {
-        type: Sequelize.DOUBLE,
-        allowNull: false,
-      },
-      qty: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
       imageUrl: {
         type: Sequelize.TEXT,
         allowNull: false,

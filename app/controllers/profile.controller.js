@@ -1,6 +1,7 @@
 const db = require("../model/index.model");
 const Profile = db.profiles;
 const User = db.users;
+const Gender = db.genders;
 const { Sequelize, Op } = require("sequelize");
 const uploadImage = require("../utils/helpers");
 
@@ -96,6 +97,10 @@ exports.getProfileInfo = async (req, res) => {
           model: Profile,
           attributes: ["id", "image_url", "is_latest"],
         },
+        {
+          model: Gender,
+          attributes: ["id", "value"],
+        },
       ],
     });
     if (user) {
@@ -107,7 +112,8 @@ exports.getProfileInfo = async (req, res) => {
 };
 
 exports.updateProfile = async (req, res) => {
-  const { first_name, last_name, phone_number, bio } = req.body;
+  const { first_name, last_name, phone_number, date_of_birth, bio, gender_id } =
+    req.body;
   try {
     const user = await User.findOne({
       where: {
@@ -121,6 +127,8 @@ exports.updateProfile = async (req, res) => {
           lastName: last_name,
           phoneNumber: phone_number,
           bio: bio,
+          dateOfBirth: date_of_birth,
+          genderId: gender_id,
         },
         {
           where: {

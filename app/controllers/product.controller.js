@@ -17,8 +17,19 @@ const getPagingData = require("../utils/paginationData");
 const uploadImage = require("../utils/helpers");
 // const { getVideoDurationInSeconds } = require('get-video-duration')
 exports.createProduct = async (req, res) => {
-  const { name, description, price, discount, thumbnail, category_id } =
-    req.body;
+  const {
+    name,
+    description,
+    price,
+    discount,
+    thumbnail,
+    category_id,
+    variant_name,
+    variant_value,
+    qty_of_product_size,
+    variant_image_url,
+    size_text,
+  } = req.body;
   const imageUrlPath = typeof req.body.thumbnail;
   if (imageUrlPath === "string") {
     if (!name) {
@@ -42,7 +53,7 @@ exports.createProduct = async (req, res) => {
       });
     }
     try {
-      await Product.create({
+      const product = await Product.create({
         name: name,
         description: description,
         price: price,
@@ -50,11 +61,29 @@ exports.createProduct = async (req, res) => {
         userId: req.userId,
         discount: discount,
         categoryId: category_id,
-      }).then((product) => {
-        res.status(201).send({
-          message: "Course Created...",
-        });
       });
+      if (product) {
+        console.log("Product ID: ", product.id);
+        const variant = await Variant.create({
+          name: variant_name,
+          productName: product.name + " - " + variant_name,
+          value: variant_value,
+          imageUrl: variant_image_url,
+          productId: product.id,
+          discount: discount,
+        });
+        if (variant) {
+          const size = await Size.create({
+            sizeText: size_text,
+            price: product.price,
+            variantId: variant.id,
+            qty: qty_of_product_size,
+          });
+          if (size) {
+            res.status(201).send({ message: "Product has been created..." });
+          }
+        }
+      }
     } catch (ex) {
       res.status(404).send({ message: ex.message });
     }
@@ -83,7 +112,7 @@ exports.createProduct = async (req, res) => {
     }
     try {
       const imageUrl = await uploadImage.uploadImage(myFile);
-      await Product.create({
+      const product = await Product.create({
         name: name,
         description: description,
         price: price,
@@ -91,11 +120,28 @@ exports.createProduct = async (req, res) => {
         userId: req.userId,
         discount: discount,
         categoryId: category_id,
-      }).then((product) => {
-        res.status(201).send({
-          message: "Product Created...",
-        });
       });
+      if (product) {
+        console.log("Product ID: ", product.id);
+        const variant = await Variant.create({
+          name: variant_name,
+          productName: product.name + " - " + variant_name,
+          value: variant_value,
+          imageUrl: variant_image_url,
+          productId: product.id,
+        });
+        if (variant) {
+          const size = await Size.create({
+            sizeText: size_text,
+            price: product.price,
+            variantId: variant.id,
+            qty: qty_of_product_size,
+          });
+          if (size) {
+            res.status(201).send({ message: "Product has been created..." });
+          }
+        }
+      }
     } catch (ex) {
       res.status(404).send({ message: ex.message });
     }
@@ -472,19 +518,11 @@ exports.findProductDetail = async (req, res) => {
         include: [
           {
             model: Variant,
-            attributes: [
-              "id",
-              "name",
-              "value",
-              "product_name",
-              "price",
-              "qty",
-              "image_url",
-            ],
+            attributes: ["id", "name", "value", "product_name", "image_url"],
             include: [
               {
                 model: Size,
-                attributes: ["id", "size_text", "variant_id"],
+                attributes: ["id", "size_text", "price", "qty", "variant_id"],
               },
             ],
           },
@@ -528,19 +566,11 @@ exports.findProductDetail = async (req, res) => {
         include: [
           {
             model: Variant,
-            attributes: [
-              "id",
-              "name",
-              "value",
-              "product_name",
-              "price",
-              "qty",
-              "image_url",
-            ],
+            attributes: ["id", "name", "value", "product_name", "image_url"],
             include: [
               {
                 model: Size,
-                attributes: ["id", "size_text", "variant_id"],
+                attributes: ["id", "size_text", "price", "qty", "variant_id"],
               },
             ],
           },

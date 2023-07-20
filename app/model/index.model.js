@@ -1,6 +1,7 @@
-const Sequelize = require("sequelize");
+const { Sequelize, DataTypes } = require("sequelize");
 const categories = require("./categories.model");
 const subCategories = require("./subcategories.model");
+
 // const sequelize = new Sequelize("ecommerce-db", "me", "password", {
 //   host: "localhost",
 //   dialect: "postgres",
@@ -14,6 +15,18 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+// add column to existing table
+// const queryInterface = sequelize.getQueryInterface();
+// queryInterface.addColumn(
+//   "users",
+//   "dateOfBirth",
+//   {
+//     type: DataTypes.DATE,
+//   },
+//   {
+//     underscored: true,
+//   }
+// );
 db.categories = require("./categories.model.js")(sequelize, Sequelize);
 db.users = require("./user.model.js")(sequelize, Sequelize);
 db.slides = require("./slides.model")(sequelize, Sequelize);
@@ -31,7 +44,10 @@ db.deviceToken = require("./device_token.model")(sequelize, Sequelize);
 db.sizes = require("./sizes.model")(sequelize, Sequelize);
 db.variants = require("./variants.model")(sequelize, Sequelize);
 db.profiles = require("./profiles.model")(sequelize, Sequelize);
+db.genders = require("./genders.model")(sequelize, Sequelize);
 db.users.hasMany(db.profiles);
+db.genders.hasMany(db.users);
+db.users.belongsTo(db.genders);
 db.sizes.hasMany(db.orderItem);
 db.orderItem.belongsTo(db.sizes);
 db.variants.hasMany(db.orderItem);

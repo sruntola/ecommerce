@@ -2,7 +2,7 @@ const db = require("../model/index.model");
 const Category = db.categories;
 const uploadImage = require("../utils/helpers");
 exports.createCategory = async (req, res) => {
-  const { name } = req.body;
+  const { name, icon } = req.body;
   const myFile = req.file;
   if (!name) {
     res.status(404).send({

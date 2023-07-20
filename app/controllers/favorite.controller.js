@@ -8,14 +8,25 @@ const Variant = db.variants;
 exports.addProductToFavorite = async (req, res) => {
   try {
     const { product_id, variant_id } = req.body;
-    await Favorite.create({
-      userId: req.userId,
-      productId: product_id,
-    }).then((product) => {
-      res.status(201).send({
-        message: "Created success",
-      });
+    const favorite = await Favorite.findOne({
+      where: {
+        productId: product_id,
+      },
     });
+    if (favorite) {
+      res
+        .status(404)
+        .send({ message: "This product already added to favorite..." });
+    } else {
+      await Favorite.create({
+        userId: req.userId,
+        productId: product_id,
+      }).then((product) => {
+        res.status(201).send({
+          message: "Created success",
+        });
+      });
+    }
   } catch (ex) {
     res.status(404).send({
       message: ex,
