@@ -90,6 +90,7 @@ exports.getProfileInfo = async (req, res) => {
         "last_name",
         "phone_number",
         "email",
+        "date_of_birth",
         "bio",
       ],
       include: [
