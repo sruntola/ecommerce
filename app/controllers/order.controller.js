@@ -4,6 +4,7 @@ const DeliveryAddress = db.deliveryAddress;
 const OrderItem = db.orderItem;
 const Product = db.products;
 const Variant = db.variants;
+const Size = db.sizes;
 
 exports.createOrder = async (req, res) => {
   const {
@@ -166,6 +167,10 @@ exports.findAllOrder = async (req, res) => {
                 "product_id",
               ],
             },
+            {
+              model: Size,
+              attributes: ["id", "size_text"],
+            },
           ],
         },
       ],
@@ -233,6 +238,10 @@ exports.findInvoiceByOrderId = async (req, res) => {
                 "product_id",
               ],
             },
+            {
+              model: Size,
+              attributes: ["id", "size_text"],
+            },
           ],
         },
       ],
@@ -240,6 +249,7 @@ exports.findInvoiceByOrderId = async (req, res) => {
         "orders.id",
         "deliveryaddress.id",
         "orderitems.id",
+        "orderitems.size.id",
         "orderitems.variant.id",
       ],
     });
