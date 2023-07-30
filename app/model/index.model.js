@@ -2,13 +2,13 @@ const { Sequelize, DataTypes } = require("sequelize");
 const categories = require("./categories.model");
 const subCategories = require("./subcategories.model");
 
-// const sequelize = new Sequelize("ecommerce-db", "me", "password", {
-//   host: "localhost",
-//   dialect: "postgres",
-//   port: 5432,
-// });
-const connectionString = `${process.env.DATABASE_URL}`;
-const sequelize = new Sequelize(connectionString);
+const sequelize = new Sequelize("ecommerce-db", "postgres", "tola", {
+  host: "localhost",
+  dialect: "postgres",
+  port: 5432,
+});
+// const connectionString = `${process.env.DATABASE_URL}`;
+// const sequelize = new Sequelize(connectionString);
 
 const db = {};
 

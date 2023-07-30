@@ -95,7 +95,7 @@ exports.removeProductFromCart = async (req, res) => {
 };
 
 exports.updateCart = async (req, res) => {
-  const { product_id, size_id, variant_id, price, quantity } = req.body;
+  const { product_id, size_id, variant_id, quantity } = req.body;
   try {
     const cart = await Cart.findByPk(req.params.id);
     if (!cart) {
@@ -104,45 +104,56 @@ exports.updateCart = async (req, res) => {
     if (!req.params.id) {
       res.status(400).send({ message: "Cart ID is required.." });
     }
-    if (!product_id) {
-      res.status(400).send({
-        message: "Product ID is required...",
-      });
+    if (variant_id) {
+      if(!product_id){
+        res.status(400).send({
+          message: "Product id is required..."
+        })
+      }else {
+        const variant = await Variant.findOne({
+          where: {
+            id: variant_id,
+            productId: product_id,
+          },
+        });
+        if (!variant) {
+          res.status(404).send({
+            message: "This product no variants.",
+          });
+        }
+        if (variant.quantity === 0 || variant.quantity < quantity) {
+          res.status(400).send({
+            message: "Remain quantity is only " + variant.quantity,
+          });
+        }
+      }
     }
-    if (!variant_id) {
-      res.status(400).send({
-        message: "Variant ID is required...",
-      });
+    if(size_id){
+      if(!variant_id){
+        res.status(400).send({
+          message: "Variant ID is required..."
+        })
+      }else {
+        const size = await Size.findOne({
+          where: {
+            variant_id: variant_id
+          }
+        })
+        if(!size){
+          res.status(400).send({message: "Size doesn't exist with this variant..."})
+        }
+      }
     }
-    const variant = await Variant.findOne({
-      where: {
-        id: variant_id,
-        productId: product_id,
-      },
-    });
-    if (!variant) {
-      res.status(404).send({
-        message: "This product no variants.",
-      });
-    }
-    if (variant.quantity === 0 || variant.quantity < quantity) {
-      res.status(400).send({
-        message: "Remain quantity is only " + variant.quantity,
-      });
-    }
-
     await Cart.update(
       {
-        price: price,
         quantity: quantity,
-        productId: product_id,
         variantId: variant_id,
         sizeId: size_id,
-        userId: req.userId,
       },
       {
         where: {
           id: req.params.id,
+          userId: req.userId
         },
       }
     ).then((cart) => {
@@ -163,7 +174,7 @@ exports.findAllCartListing = async (req, res) => {
       where: {
         userId: req.userId,
       },
-      attributes: ["id", "price", "quantity"],
+      attributes: ["id", "price", "quantity", 'product_id'],
       include: [
         {
           model: Variant,
