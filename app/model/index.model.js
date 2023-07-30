@@ -79,6 +79,8 @@ db.users.hasMany(db.order);
 db.deliveryAddress.hasMany(db.order);
 db.users.hasMany(db.deliveryAddress);
 db.variants.hasMany(db.carts);
+db.products.hasMany(db.carts)
+db.carts.belongsTo(db.products)
 db.carts.belongsTo(db.variants);
 db.sizes.hasMany(db.carts);
 db.carts.belongsTo(db.sizes);
