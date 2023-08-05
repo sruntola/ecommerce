@@ -51,6 +51,11 @@ module.exports = function (app) {
     multerMid.single("imageprofile"),
     controller.createProfile
   );
+  app.put(
+    "/api/v1/assign-role",
+    [auth.verifyTokenAndAdmin],
+    controller.assignRole
+  );
   app.get("/api/v1/profile", [auth.verifyToken], controller.getProfileInfo);
   app.put("/api/v1/profile", [auth.verifyToken], controller.updateProfile);
   app.put(

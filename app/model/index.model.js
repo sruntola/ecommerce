@@ -3,9 +3,9 @@ const categories = require("./categories.model");
 const subCategories = require("./subcategories.model");
 
 // const sequelize = new Sequelize("ecommerce-db", "postgres", "tola", {
-//   host: "localhost",
-//   dialect: "postgres",
-//   port: 5432,
+//     host: "localhost",
+//     dialect: "postgres",
+//     port: 5432,
 // });
 const connectionString = `${process.env.DATABASE_URL}`;
 const sequelize = new Sequelize(connectionString);
@@ -45,14 +45,19 @@ db.sizes = require("./sizes.model")(sequelize, Sequelize);
 db.variants = require("./variants.model")(sequelize, Sequelize);
 db.profiles = require("./profiles.model")(sequelize, Sequelize);
 db.genders = require("./genders.model")(sequelize, Sequelize);
+db.roles = require("./roles.model")(sequelize, Sequelize)
+db.orderStatus = require("./order_sratus.model")(sequelize, Sequelize)
 db.users.hasMany(db.profiles);
+db.roles.hasMany(db.users)
+db.users.belongsTo(db.roles);
 db.genders.hasMany(db.users);
 db.users.belongsTo(db.genders);
 db.sizes.hasMany(db.orderItem);
 db.orderItem.belongsTo(db.sizes);
 db.variants.hasMany(db.orderItem);
 db.orderItem.belongsTo(db.variants);
-
+db.orderStatus.hasMany(db.order)
+db.order.belongsTo(db.orderStatus)
 db.productSection.hasMany(db.products);
 db.products.belongsTo(db.productSection);
 db.order.hasMany(db.payment);

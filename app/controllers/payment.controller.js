@@ -6,7 +6,7 @@ const Vairant = db.variants;
 const Size = db.sizes;
 
 exports.createPayment = async (req, res) => {
-  const { amount, payment_method, order_id } = req.body;
+  const { amount, payment_method, order_id, user_id } = req.body;
   if (!amount) {
     res.status(404).send({
       message: "amount is required...",
@@ -24,14 +24,14 @@ exports.createPayment = async (req, res) => {
         amount: amount,
         paymentMethod: payment_method,
         orderId: order_id,
-        userId: req.userId,
+        userId: user_id,
       });
       if (payment) {
         const order = await Order.findByPk(order_id);
         if (order) {
           await Order.update(
             {
-              status: "Paid",
+              orderstatus_id: 5,
             },
             {
               where: {

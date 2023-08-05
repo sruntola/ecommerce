@@ -3,7 +3,7 @@ const { Sequelize, Op } = require("sequelize");
 const DeliveryAddress = db.deliveryAddress
 
 exports.createDeliveryAddress = async (req, res) => {
-    const { street_no, home_no, full_address, latitute, longtitute, label, is_default } = req.body
+    const { first_name, last_name, phone, street_no, home_no, full_address, latitute, longtitute, label, is_default } = req.body
     try {
         if (!full_address) {
             res.status(400).send({
@@ -16,6 +16,9 @@ exports.createDeliveryAddress = async (req, res) => {
             })
         }
         const deliveryAddress = await DeliveryAddress.create({
+            firstName: first_name,
+            lastName: last_name,
+            phone: phone,
             streetNo: street_no,
             homeNo: home_no,
             fullAddress: full_address,
@@ -47,7 +50,7 @@ exports.createDeliveryAddress = async (req, res) => {
 }
 
 exports.updateDeliveryAddress = async (req, res) => {
-    const { street_no, home_no, full_address, latitute, longtitute, label, is_default } = req.body
+    const { first_name, last_name, phone, street_no, home_no, full_address, latitute, longtitute, label, is_default } = req.body
     try {
         if (!req.params.id) {
             res.status(404).send({
@@ -61,6 +64,9 @@ exports.updateDeliveryAddress = async (req, res) => {
             })
         }
         const result = await DeliveryAddress.update({
+            firstName: first_name,
+            lastName: last_name,
+            phone: phone,
             streetNo: street_no,
             homeNo: home_no,
             fullAddress: full_address,
@@ -100,6 +106,9 @@ exports.findAllDeliveryAddress = async (req, res) => {
         const deliveryAddress = await DeliveryAddress.findAll({
             attributes: [
                 "id",
+                "first_name",
+                "last_name",
+                "phone",
                 "street_no",
                 "home_no",
                 "full_address",

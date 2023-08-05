@@ -4,10 +4,6 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.DOUBLE,
             allowNull: false
         },
-        status: {
-            type: Sequelize.TEXT,
-            defaultValue: "New"
-        }
     }, {
         underscored: true
     })
